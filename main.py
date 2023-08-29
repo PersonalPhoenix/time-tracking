@@ -141,7 +141,7 @@ class App(Singleton, Tk):
                             int((time.strftime('%H')[0:2]))*3600 + \
                             int((time.strftime('%M')[0:2]))*60 + \
                             int((time.strftime('%S')[0:2]))
-                    in_work = current_time - (self.START_TIME_IN_SАECONDS + sum(self.ALL_TIME_PAUSE))
+                    in_work = current_time - (self.START_TIME_IN_SECONDS + sum(self.ALL_TIME_PAUSE))
                     hours =  in_work // 3600
                     minutes = (in_work - hours * 3600) // 60
                     seconds = (in_work - hours * 3600) - minutes * 60

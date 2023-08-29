@@ -62,12 +62,13 @@ def clear_database() -> None:
 
     if messagebox.askokcancel('Внимание', 'Вы действительно хотите очистить базу данных?'):
         
-        try:
+        #try:
             connect = sqlite3.connect('db.sqlite3')
             cursor = connect.cursor()
             cursor.execute('''DELETE FROM sessions;''')
+            cursor.execute('''DELETE FROM sqlite_sequence WHERE name = 'sessions';''')
             connect.commit()
             cursor.close()
             messagebox.showinfo('Внимание', 'База данных была успешно очищена')
 
-        except: messagebox.showerror('Ошибка', 'Возникла проблема при подключении к базе данных')
+        #except: messagebox.showerror('Ошибка', 'Возникла проблема при подключении к базе данных')
