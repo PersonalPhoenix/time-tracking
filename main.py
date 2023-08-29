@@ -74,9 +74,9 @@ class App(Singleton, Tk):
 
         # пункт меню 'Файл'.
         file_menu = Menu(main_menu, tearoff = 0)
-        file_menu.add_command(label = 'Изменить путь экспорта', activebackground = '#2bd465', command = change_current_path)
-        file_menu.add_command(label = 'Сделать путь по умолчанию', activebackground = '#2bd465', command = default_path)
-        file_menu.add_command(label = 'Текущий путь экспорта', activebackground = '#2bd465', command = current_path)
+        file_menu.add_command(label = 'Изменить путь экспорта', activebackground = '#808080', command = change_current_path)
+        file_menu.add_command(label = 'Сделать путь по умолчанию', activebackground = '#808080', command = default_path)
+        file_menu.add_command(label = 'Текущий путь экспорта', activebackground = '#808080', command = current_path)
         file_menu.add_separator()
         file_menu.add_command(label = 'Очистить базу данных', activebackground = 'red', command = clear_database)
 
@@ -141,7 +141,7 @@ class App(Singleton, Tk):
                             int((time.strftime('%H')[0:2]))*3600 + \
                             int((time.strftime('%M')[0:2]))*60 + \
                             int((time.strftime('%S')[0:2]))
-                    in_work = current_time - (self.START_TIME_IN_SECONDS + sum(self.ALL_TIME_PAUSE))
+                    in_work = current_time - (self.START_TIME_IN_SАECONDS + sum(self.ALL_TIME_PAUSE))
                     hours =  in_work // 3600
                     minutes = (in_work - hours * 3600) // 60
                     seconds = (in_work - hours * 3600) - minutes * 60
