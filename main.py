@@ -74,7 +74,7 @@ class App(Singleton, Tk):
 
         # пункт меню 'Файл'.
         file_menu = Menu(main_menu, tearoff = 0)
-        file_menu.add_command(label = 'Изменить путь экспорта', activebackground = '#808080', command = change_current_path)
+        file_menu.add_command(label = 'Изменить путь экспорта', activebackground = '#808080',command = change_current_path)
         file_menu.add_command(label = 'Сделать путь по умолчанию', activebackground = '#808080', command = default_path)
         file_menu.add_command(label = 'Текущий путь экспорта', activebackground = '#808080', command = current_path)
         file_menu.add_separator()
@@ -288,7 +288,8 @@ class App(Singleton, Tk):
 
         # кнопка 'Начать сессию'.
         button_start = Button(frame_mid_left, text = 'Начать сессию', font = 'arial 14', 
-                              width = 25, background = '#2bd465', command = __start_time_session)
+                              width = 25, background = '#2bd465', cursor = 'hand2',
+                              command = __start_time_session)
         button_start.pack(expand = True)
 
         # label информации о паузе.
@@ -303,19 +304,22 @@ class App(Singleton, Tk):
 
         # кнопка 'Пауза / Продолжить'.
         button_pause = Button(frame_mid_right, text = 'Пауза', font = 'arial 14', 
-                              width = 25,background = '#abd926', command = __on_press_pause)
+                              width = 25,background = '#abd926', cursor = 'hand2',
+                              command = __on_press_pause)
         button_pause.pack(expand = True)
         
         # кнопка 'Завершить сессию'.
         button_end_session = Button(frame_bot_left, text = 'Завершить сессию',
-                        font = 'arial 14', width = 25,
-                        background = '#ff000a', command = __on_press_end_session)
+                                    font = 'arial 14', width = 25,
+                                    background = '#ff000a', cursor = 'hand2',
+                                    command = __on_press_end_session)
         button_end_session.pack(expand = True)
 
         # кнопка 'Просмотреть журнал'.
         button_view_journal = Button(frame_bot_right, text = 'Просмотреть журнал',
-                     font = 'arial 14', width = 25,
-                     background = '#0009ff', command = create_journal)
+                                    font = 'arial 14', width = 25,
+                                    background = '#0009ff', cursor = 'hand2',
+                                    command = create_journal)
         button_view_journal.pack(expand = True)
 
         # label текущего времени по МСК.
