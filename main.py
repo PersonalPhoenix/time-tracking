@@ -107,9 +107,14 @@ class App(Singleton, Tk):
             if self.SESSION == True:
                 messagebox.showerror('Внимание', 'Сессия уже началась :)')
                 return
-            else:
+            
+            self.__session_name()
 
-                self.__session_name()
+            if self.SESSION_NAME == '':
+                messagebox.showerror('Внимание', 'Вы не указали имя сессии\nСессия была отменена')
+                return
+            
+            else:
                 
                 self.SESSION = True
                 _ = time.strftime(f'%H:%M:%S')
@@ -203,7 +208,7 @@ class App(Singleton, Tk):
             else:
                 self.ALL_TIME_PAUSE.append(self.TIME_PAUSE)
         
-        # заверешние сессии
+        # заверешние сессии.
         def __on_press_end_session() -> None:
 
             if self.SESSION == True or self.PAUSE == True:
@@ -259,11 +264,11 @@ class App(Singleton, Tk):
         # часы главного окна.
         def __clock() -> None:
 
-            # текущее время МСК
+            # текущее время МСК.
             current_time_label['text'] = time.strftime('%H:%M:%S')
             current_time_label.after(1000, __clock)
 
-            # текущая дата МСК
+            # текущая дата МСК.
             current_data_label['text'] = time.strftime('%d:%m:%Y')
             current_data_label.after(86400000, __clock)
             
@@ -321,7 +326,7 @@ class App(Singleton, Tk):
         current_data_label = Label(frame_deep_left, font = 'arial 14', background = '#1e293b', foreground = '#d6e7ed')
         current_data_label.pack(expand = True)
 
-        # вызов часов после реализации label'ов для отображения даты/времени
+        # вызов часов после реализации label'ов для отображения даты/времени.
         __clock()
 
     '''

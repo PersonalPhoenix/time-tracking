@@ -53,16 +53,11 @@ class SessionName(Toplevel):
 
         self.bind('<Return>', self.__on_press_return)
 
-        self.protocol('WM_DELETE_WINDOW', self.__on_press_close)
-
     def __on_press_okey(self):
         self.__pass_info()
     
     def __on_press_return(self, event):
         self.__pass_info()
-
-    def __on_press_close(self):
-            messagebox.showinfo('Внимание', 'Сессия была отменена')
 
     # метод получения введенного имени.
     def __pass_info(self):
@@ -70,9 +65,9 @@ class SessionName(Toplevel):
         info = self.entry_session_name.get()
 
         if info.replace(' ', '') == '':
-            messagebox.showerror('Внимание', 'Вы не указали имя сессии!')
+            self.destroy()
             return
-        
+            
         self.master.start_session_with_session_name(info)
         self.destroy()
 
