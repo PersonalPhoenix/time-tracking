@@ -31,9 +31,7 @@ class WorkApp(App):
         
         def __on_press_close_main_window():
 
-            confirmation = messagebox.askokcancel('Подверждение действия', 'Вы действительно хотите выйти?')
-
-            if confirmation: self.destroy()
+            if messagebox.askokcancel('Подверждение действия', 'Вы действительно хотите выйти?'): self.destroy()
 
         self.protocol('WM_DELETE_WINDOW', __on_press_close_main_window)
 

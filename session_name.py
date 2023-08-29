@@ -43,13 +43,15 @@ class SessionName(Toplevel):
         self.entry_session_name.pack(expand = True)
         self.entry_session_name.focus()
 
+        # кнопка 'Okay'.
         button_okay = Button(frame_bottom, text = 'Окей', background = '#2bd465', 
                              font = 'arial 14', width = 20, command = self.__on_press_okey)
         button_okay.place(x = 110, y = 60)
 
-        button_cancel = Button(frame_bottom, text = 'Случайное имя', background = '#abd926', 
+        # кнопка 'Случайное имя'.
+        button_random_name = Button(frame_bottom, text = 'Случайное имя', background = '#abd926', 
                                font = 'arial 14', width = 20, command = self.__random_name_session)
-        button_cancel.place(x = 360, y = 60)
+        button_random_name.place(x = 360, y = 60)
 
         self.bind('<Return>', self.__on_press_return)
 
