@@ -19,7 +19,7 @@ def change_current_path() -> None:
         except:
             messagebox.showerror('Внимание', 'Что-то случилось с settings.json\nПуть экспорта: текущая директория')
 
-        messagebox.showinfo('Внимание', f'Путь не был указан.\nИспользуется путь по умолчанию:\n{os.getcwd()}')
+        messagebox.showinfo('Внимание', f'Путь не был указан.\n\nИспользуется путь по умолчанию:\n{os.getcwd()}')
         return
     
     try:
