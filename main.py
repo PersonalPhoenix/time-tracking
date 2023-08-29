@@ -83,7 +83,7 @@ class App(Singleton, Tk):
         # пункт меню 'Экспорт'.
         export_menu = Menu(main_menu, tearoff = 0)
         export_menu.add_command(label = 'Экспорт в Excel', activebackground = '#2bd465', command = export_sql_to_excel)
-        export_menu.add_command(label = 'Экспорт в CSV', activebackground = '#808080', command = export_sql_to_csv)
+        export_menu.add_command(label = 'Экспорт в CSV', activebackground = '#bf6148', command = export_sql_to_csv)
         export_menu.add_command(label = 'Экспорт в Word', activebackground = '#0009ff', command = export_sql_to_word)
 
         # пункт меню 'Справка'.
