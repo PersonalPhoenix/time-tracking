@@ -55,16 +55,16 @@ class SessionName(Toplevel):
 
         self.bind('<Return>', self.__on_press_return)
 
-    def __on_press_okey(self):
+    def __on_press_okey(self) -> None:
         self.__pass_info()
     
-    def __on_press_return(self, event):
+    def __on_press_return(self, event) -> None:
         self.__pass_info()
 
     # метод получения введенного имени.
-    def __pass_info(self):
+    def __pass_info(self) -> str:
 
-        info = self.entry_session_name.get()
+        info: str = self.entry_session_name.get()
 
         if info.replace(' ', '') == '':
             self.destroy()
@@ -74,8 +74,8 @@ class SessionName(Toplevel):
         self.destroy()
 
     # метод генерации рандомного имени.
-    def __random_name_session(self): 
+    def __random_name_session(self) -> str: 
 
-        info = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(10))
+        info: str = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(10))
         self.master.start_session_with_session_name(info)
         self.destroy()

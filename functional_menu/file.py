@@ -9,7 +9,7 @@ def change_current_path() -> None:
     'Файл' -> 'Изменить путь экспорта'.
     '''
 
-    dir_name = filedialog.askdirectory()
+    dir_name: str = filedialog.askdirectory()
     
     if dir_name.replace(' ', '') == '':
 
@@ -36,7 +36,7 @@ def current_path() -> None:
 
     try:
         with open ('settings.json', 'r', encoding = 'utf-8') as file:
-            dir_name = json.load(file)['dir_name']
+            dir_name: str = json.load(file)['dir_name']
     except:
         messagebox.showerror('Внимание', 'Что-то случилось с settings.json\nПуть экспорта: текущая директория')
 
@@ -61,6 +61,7 @@ def clear_database() -> None:
     '''
 
     if messagebox.askokcancel('Внимание', 'Вы действительно хотите очистить базу данных?'):
+        
         try:
             connect = sqlite3.connect('db.sqlite3')
             cursor = connect.cursor()
@@ -68,5 +69,5 @@ def clear_database() -> None:
             connect.commit()
             cursor.close()
             messagebox.showinfo('Внимание', 'База данных была успешно очищена')
-        except:
-            messagebox.showerror('Ошибка', 'Возникла проблема при подключении к базе данных')
+
+        except: messagebox.showerror('Ошибка', 'Возникла проблема при подключении к базе данных')

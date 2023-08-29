@@ -21,7 +21,6 @@ class WorkApp(App):
     END_PAUSE: str = 'Нет'
     TIME_IN_PAUSE: str = 'Нет'
 
-
     def __init__(self) -> Tk:
         super().__init__()
 

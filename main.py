@@ -339,6 +339,6 @@ class App(Singleton, Tk):
         self.wait_window(session_top_level)
 
     # получение указанного имени.
-    def start_session_with_session_name(self, info) -> None:
+    def start_session_with_session_name(self, info) -> messagebox:
         self.SESSION_NAME = info
         messagebox.showinfo('Имя сессии', f'Имя сессии: {info}')

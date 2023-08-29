@@ -10,19 +10,19 @@ from xlsxwriter.exceptions import FileCreateError
 from docx import Document
 
 
-def get_dir_name():
+def get_dir_name() -> str:
     '''
     Получение дирекории для экспорта файла.
     '''
 
     try:
         with open('settings.json', 'r', encoding = 'utf-8') as file:
-            dir_name = json.load(file)['dir_name']
+            dir_name: str = json.load(file)['dir_name']
 
             return dir_name
     except:
         messagebox.showerror('Внимание', 'Что-то случилось с settings.json\nФайл был сохранен в текущую директорию')
-        dir_name = os.getcwd()
+        dir_name: str = os.getcwd()
 
         return dir_name
     
@@ -43,7 +43,7 @@ def export_sql_to_excel() -> None:
         cursor = conn.cursor()
 
         cursor.execute('''select * from sessions;''')
-        sql_query = cursor.fetchall()
+        sql_query: list = cursor.fetchall()
 
         if sql_query == []:
             messagebox.showerror('Ошибка', 'Журнал пуст! Нечего импортировать')
@@ -77,7 +77,7 @@ def export_sql_to_excel() -> None:
         workbook.close()
         success()
 
-    except FileCreateError as error:
+    except FileCreateError:
         messagebox.showerror('ОШибка создания файла', 
                              f'Возника ошибка при создании файла.\nПроверьте корректность пути экспорта')
 
@@ -91,7 +91,7 @@ def export_sql_to_csv() -> None:
         cursor = conn.cursor()
 
         cursor.execute('''select * from sessions;''')
-        data = cursor.fetchall()
+        data: list = cursor.fetchall()
 
         if data == []:
             messagebox.showerror('Ошибка', 'Журнал пуст! Нечего импортировать')
@@ -121,7 +121,7 @@ def export_sql_to_word() -> None:
         cursor = conn.cursor()
 
         cursor.execute('''select * from sessions;''')
-        data = cursor.fetchall()
+        data: list = cursor.fetchall()
 
         if data == []:
             messagebox.showerror('Ошибка', 'Журнал пуст! Нечего импортировать')
