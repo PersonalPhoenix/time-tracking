@@ -46,7 +46,7 @@ def export_sql_to_excel() -> None:
         sql_query: list = cursor.fetchall()
 
         if sql_query == []:
-            messagebox.showerror('Ошибка', 'Журнал пуст! Нечего импортировать')
+            messagebox.showerror('Ошибка', 'Журнал пуст! Нечего экспортировать')
             return
         
         workbook = Workbook(f'{get_dir_name()}/экспорт от {time.strftime("%d-%m-%Y")} в {time.strftime("%H %M %S")}.xlsx')
