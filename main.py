@@ -33,7 +33,7 @@ class App(Singleton, Tk):
         self.resizable(False, False)
 
         '''
-        Разметка главного окна
+        Разметка главного окна.
         '''
 
         # frame для отображения таймера прямого отсчета.
@@ -98,243 +98,129 @@ class App(Singleton, Tk):
         main_menu.add_cascade(label = 'Справка', menu = hint_menu)
 
         '''
-        Функционал виджетов главного окна.
-        '''
-        
-        # отображение времени начала сессии.
-        def __start_time_session() -> None:
-            
-            if self.SESSION == True:
-                messagebox.showerror('Внимание', 'Сессия уже началась :)')
-                return
-            
-            self.__session_name()
-
-            if self.SESSION_NAME == '':
-                messagebox.showerror('Внимание', 'Вы не указали имя сессии\nСессия была отменена')
-                return
-            
-            else:
-                
-                self.SESSION = True
-                _ = time.strftime(f'%H:%M:%S')
-                self.SESSION_START = f'{_[0:2]}ч {_[3:5]}м {_[6:8]}c'
-                session_label['text'] = f'Сессия начата в: {_}'
-
-                __session_start_time_in_seconds()
-                __working_hours()
-
-        # вычислиение времени начало сессии в секундах.
-        def __session_start_time_in_seconds() -> int:
-            
-            self.START_TIME_IN_SECONDS = \
-                        int(session_label['text'][17:19])*3600 + \
-                        int(session_label['text'][20:22])*60 + \
-                        int(session_label['text'][23:25])
-
-        # таймер прямого отсчета времени в работе.
-        def __working_hours() -> None:
-            
-            if self.SESSION == True:
-                if self.PAUSE == False:
-                    current_time = \
-                            int((time.strftime('%H')[0:2]))*3600 + \
-                            int((time.strftime('%M')[0:2]))*60 + \
-                            int((time.strftime('%S')[0:2]))
-                    in_work = current_time - (self.START_TIME_IN_SECONDS + sum(self.ALL_TIME_PAUSE))
-                    hours =  in_work // 3600
-                    minutes = (in_work - hours * 3600) // 60
-                    seconds = (in_work - hours * 3600) - minutes * 60
-                    time_session_label['text'] = f'Время в работе: {hours}ч:{minutes}м:{seconds}с'
-                    self.TIME_IN_WORK = f'{hours}ч {minutes}м {seconds}с'
-                    time_session_label.after(1000, __working_hours)
-                else:
-                    return
-            else:
-                return
-
-        def __on_press_pause() -> None:
-                
-            if self.SESSION == False:
-                messagebox.showerror('Внимание', 'Нельза оставить то, что еще не началось :)')
-
-            else:
-                self.PAUSE = True
-
-                button_pause['text'] = 'Продолжить'
-                button_pause['command'] = __on_press_continue
-
-                self.END_PAUSE = 'Пауза не была остановлена'
-
-                __set_pause()
-                __in_pause()
-
-        def __on_press_continue() -> None:
-
-            self.PAUSE = False
-            _ = time.strftime('%H:%M:%S')
-            self.END_PAUSE = f'{_[0:2]}ч {_[3:5]}м {_[6:8]}с '
-
-            button_pause['text'] = 'Пауза'
-            button_pause['command'] = __on_press_pause
-            pause_time_text_label['text'] = 'Пауза не установлена'
-            text_time_in_pause_label['text'] = ''
-            
-            __working_hours()
-
-        def __set_pause() -> None:
-            self.HAVE_PAUSE = 'Да'
-            _ = time.strftime('%H:%M:%S')
-            self.START_PAUSE = f'{_[0:2]}ч {_[3:5]}м {_[6:8]}с'
-            pause_time_text_label['text'] = f'Пауза установлена в: {_}'
-
-        def __in_pause() -> None:
-
-            if self.PAUSE == True:
-                start_pause = \
-                            int(pause_time_text_label['text'][21:23])*3600 +\
-                            int(pause_time_text_label['text'][24:26])*60 +\
-                            int(pause_time_text_label['text'][27:29])
-                current_time = int(time.strftime('%H'))*3600 + int(time.strftime('%M'))*60 + int(time.strftime('%S'))
-                time_in_pause = current_time - start_pause
-                self.TIME_PAUSE = time_in_pause
-                hours = time_in_pause // 3600
-                minutes = (time_in_pause - hours * 3600) // 60
-                seconds = (time_in_pause - hours * 3600) - minutes * 60
-                text_time_in_pause_label['text'] = f'Время в паузе: {hours}ч:{minutes}м:{seconds}с'
-                self.TIME_IN_PAUSE = f'{hours}ч {minutes}м {seconds}с'
-                text_time_in_pause_label.after(1000, __in_pause)
-
-            else:
-                self.ALL_TIME_PAUSE.append(self.TIME_PAUSE)
-        
-        # заверешние сессии.
-        def __on_press_end_session() -> None:
-
-            if self.SESSION == True or self.PAUSE == True:
-                if messagebox.askokcancel('Внмиание', 'Вы действительно хотите завершить сессию?'):
-                    __save_info_in_db()
-            else:
-                messagebox.showerror('Внимание', 'Нельзя остановить то, что еще не началось :)')
-
-        def __save_info_in_db() -> None:
-            
-            _ = time.strftime('%H:%M:%S')
-            connect = sqlite3.connect('db.sqlite3')
-            cursor = connect.cursor()
-            cursor.execute('''INSERT INTO sessions(
-                           name_session, start_session, end_session, 
-                           time_in_work, pause, start_pause, end_pause, 
-                           time_in_pause)
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?);''',
-                           (self.SESSION_NAME, self.SESSION_START,
-                            f'{_[0:2]}ч {_[3:5]}м {_[6:8]}с', self.TIME_IN_WORK,
-                            self.HAVE_PAUSE, self.START_PAUSE, 
-                            self.END_PAUSE, self.TIME_IN_PAUSE))
-            connect.commit()
-            cursor.close()
-            messagebox.showinfo('Внимание', 'Информация о сессии была успешна сохранена')
-
-            __reset_by_zero()
-
-        def __reset_by_zero() -> None:
-    
-            self.PAUSE = False
-            self.SESSION = False
-            self.START_TIME_IN_SECONDS = 0
-            self.TIME_PAUSE = 0
-            self.ALL_TIME_PAUSE = []
-            self.SESSION_NAME = ''
-            self.SESSION_START= ''
-            self.TIME_IN_WORK = ''
-            self.HAVE_PAUSE = 'Нет'
-            self.START_PAUSE = 'Нет'
-            self.END_PAUSE = 'Нет'
-            self.TIME_IN_PAUSE = 'Нет'
-            self.CLOSE_TOPLEVEL = False
-
-            session_label['text'] = 'Сессия не начата'
-            time_session_label['text'] = 'Время в работе: 0ч:0м:0с'
-
-            button_pause['text'] = 'Пауза'
-            button_pause['command'] = __on_press_pause
-            pause_time_text_label['text'] = 'Пауза не установлена'
-            text_time_in_pause_label['text'] = ''
-
-        # часы главного окна.
-        def __clock() -> None:
-
-            # текущее время МСК.
-            current_time_label['text'] = time.strftime('%H:%M:%S')
-            current_time_label.after(1000, __clock)
-
-            # текущая дата МСК.
-            current_data_label['text'] = time.strftime('%d:%m:%Y')
-            current_data_label.after(86400000, __clock)
-            
-        '''
         Виджеты главного окна.
         '''
 
         # label имени сессии.
-        session_label = Label(frame_top, background = '#1e293b', foreground = '#d6e7ed',
+        self.session_label = Label(frame_top, background = '#1e293b', foreground = '#d6e7ed',
                               text = 'Сессия не начата', font = 'arial 32')
-        session_label.pack(expand = True)
+        self.session_label.pack(expand = True)
 
         # label для таймера прямого отсчета.
-        time_session_label = Label(frame_top, background = '#1e293b', foreground = '#d6e7ed',
+        self.time_session_label = Label(frame_top, background = '#1e293b', foreground = '#d6e7ed',
                                    text = 'Время в работе: 0ч:0м:0с', font = 'arial 32')
-        time_session_label.pack(expand = True)
+        self.time_session_label.pack(expand = True)
 
         # кнопка 'Начать сессию'.
-        button_start = Button(frame_mid_left, text = 'Начать сессию', font = 'arial 14', 
+        self.button_start = Button(frame_mid_left, text = 'Начать сессию', font = 'arial 14', 
                               width = 25, background = '#2bd465', cursor = 'hand2',
-                              command = __start_time_session)
-        button_start.pack(expand = True)
+                              command = self.__start_time_session)
+        self.button_start.pack(expand = True)
 
         # label информации о паузе.
-        pause_time_text_label = Label(frame_mid_right, background = '#1e293b', foreground = '#d6e7ed',
+        self.pause_time_text_label = Label(frame_mid_right, background = '#1e293b', foreground = '#d6e7ed',
                                       text = 'Пауза не установлена', font = 'arial 14')
-        pause_time_text_label.place(relx = 0.01, rely = 0.09, relheight = 0.2, relwidth = 1)
+        self.pause_time_text_label.place(relx = 0.01, rely = 0.09, relheight = 0.2, relwidth = 1)
 
         # label информации о длительности паузы.
-        text_time_in_pause_label = Label(frame_mid_right, background = '#1e293b', foreground = '#d6e7ed',
+        self.text_time_in_pause_label = Label(frame_mid_right, background = '#1e293b', foreground = '#d6e7ed',
                                    text = '', font = 'arial 14')
-        text_time_in_pause_label.place(relx = 0.01, rely = 0.7, relheight = 0.2, relwidth = 1)
+        self.text_time_in_pause_label.place(relx = 0.01, rely = 0.7, relheight = 0.2, relwidth = 1)
 
         # кнопка 'Пауза / Продолжить'.
-        button_pause = Button(frame_mid_right, text = 'Пауза', font = 'arial 14', 
+        self.button_pause = Button(frame_mid_right, text = 'Пауза', font = 'arial 14', 
                               width = 25,background = '#abd926', cursor = 'hand2',
-                              command = __on_press_pause)
-        button_pause.pack(expand = True)
+                              command = self.__on_press_pause)
+        self.button_pause.pack(expand = True)
         
         # кнопка 'Завершить сессию'.
-        button_end_session = Button(frame_bot_left, text = 'Завершить сессию',
+        self.button_end_session = Button(frame_bot_left, text = 'Завершить сессию',
                                     font = 'arial 14', width = 25,
                                     background = '#ff000a', cursor = 'hand2',
-                                    command = __on_press_end_session)
-        button_end_session.pack(expand = True)
+                                    command = self.__on_press_end_session)
+        self.button_end_session.pack(expand = True)
 
         # кнопка 'Просмотреть журнал'.
-        button_view_journal = Button(frame_bot_right, text = 'Просмотреть журнал',
+        self.button_view_journal = Button(frame_bot_right, text = 'Просмотреть журнал',
                                     font = 'arial 14', width = 25,
                                     background = '#0009ff', cursor = 'hand2',
                                     command = create_journal)
-        button_view_journal.pack(expand = True)
+        self.button_view_journal.pack(expand = True)
 
         # label текущего времени по МСК.
-        current_time_label = Label(frame_deep_right, font = 'arial 14', background = '#1e293b', foreground = '#d6e7ed')
-        current_time_label.pack(expand = True)
+        self.current_time_label = Label(frame_deep_right, font = 'arial 14', background = '#1e293b', foreground = '#d6e7ed')
+        self.current_time_label.pack(expand = True)
 
         # label текущей даты по МСК.
-        current_data_label = Label(frame_deep_left, font = 'arial 14', background = '#1e293b', foreground = '#d6e7ed')
-        current_data_label.pack(expand = True)
+        self.current_data_label = Label(frame_deep_left, font = 'arial 14', background = '#1e293b', foreground = '#d6e7ed')
+        self.current_data_label.pack(expand = True)
 
-        # вызов часов после реализации label'ов для отображения даты/времени.
-        __clock()
+        '''
+        Бинды главного окна.
+        '''
+
+        self.protocol('WM_DELETE_WINDOW', self.__on_press_close_main_window)
 
     '''
-    Методы класса
+    Методы класса.
+    '''
+
+    '''
+    Функционал для запуска сессии.
+    '''
+
+    # отображение времени начала сессии.
+    def __start_time_session(self) -> None:
+        
+        if self.SESSION == True:
+            messagebox.showerror('Внимание', 'Сессия уже началась :)')
+            return
+        
+        self.__session_name()
+
+        if self.SESSION_NAME == '':
+            messagebox.showerror('Внимание', 'Вы не указали имя сессии\nСессия была отменена')
+            return
+        
+        else:
+            self.SESSION = True
+            _ = time.strftime(f'%H:%M:%S')
+            self.SESSION_START = f'{_[0:2]}ч {_[3:5]}м {_[6:8]}c'
+            self.session_label['text'] = f'Сессия начата в: {_}'
+            self.__session_start_time_in_seconds()
+            self.__working_hours()
+
+    # вычислиение времени начало сессии в секундах.
+    def __session_start_time_in_seconds(self) -> int:
+        
+        self.START_TIME_IN_SECONDS = \
+                    int(self.session_label['text'][17:19])*3600 + \
+                    int(self.session_label['text'][20:22])*60 + \
+                    int(self.session_label['text'][23:25])
+
+    # таймер прямого отсчета времени в работе.
+    def __working_hours(self) -> None:
+            
+        if self.SESSION == True:
+            if self.PAUSE == False:
+                current_time = \
+                        int((time.strftime('%H')[0:2]))*3600 + \
+                        int((time.strftime('%M')[0:2]))*60 + \
+                        int((time.strftime('%S')[0:2]))
+                in_work = current_time - (self.START_TIME_IN_SECONDS + sum(self.ALL_TIME_PAUSE))
+                hours =  in_work // 3600
+                minutes = (in_work - hours * 3600) // 60
+                seconds = (in_work - hours * 3600) - minutes * 60
+                self.time_session_label['text'] = f'Время в работе: {hours}ч:{minutes}м:{seconds}с'
+                self.TIME_IN_WORK = f'{hours}ч {minutes}м {seconds}с'
+                self.time_session_label.after(1000, self.__working_hours)
+            else:
+                return
+        else:
+            return
+    
+    '''
+    Функционал для установки имени сессии.
     '''
     
     # указание имени сессии при начале работы.
@@ -343,6 +229,156 @@ class App(Singleton, Tk):
         self.wait_window(session_top_level)
 
     # получение указанного имени.
-    def start_session_with_session_name(self, info) -> messagebox:
+    def _start_session_with_session_name(self, info) -> messagebox:
         self.SESSION_NAME = info
         messagebox.showinfo('Имя сессии', f'Имя сессии: {info}')
+        
+    '''
+    Функционал для установки паузы / продолжить.
+    '''
+
+    # функционл нажатия паузы.
+    def __on_press_pause(self) -> None:
+                
+        if self.SESSION == False:
+            messagebox.showerror('Внимание', 'Нельза оставить то, что еще не началось :)')
+
+        else:
+            self.PAUSE = True
+
+            self.button_pause['text'] = 'Продолжить'
+            self.button_pause['command'] = self.__on_press_continue
+
+            self.END_PAUSE = 'Пауза не была остановлена'
+
+            self.__set_pause()
+            self.__in_pause()
+
+    # функционал нажатия 'Продолжить'.
+    def __on_press_continue(self) -> None:
+
+        self.PAUSE = False
+        _ = time.strftime('%H:%M:%S')
+        self.END_PAUSE = f'{_[0:2]}ч {_[3:5]}м {_[6:8]}с '
+
+        self.button_pause['text'] = 'Пауза'
+        self.button_pause['command'] = self.__on_press_pause
+        self.pause_time_text_label['text'] = 'Пауза не установлена'
+        self.text_time_in_pause_label['text'] = ''
+            
+        self.__working_hours()
+
+    # отображение времени начала паузы.
+    def __set_pause(self) -> None:
+        self.HAVE_PAUSE = 'Да'
+        _ = time.strftime('%H:%M:%S')
+        self.START_PAUSE = f'{_[0:2]}ч {_[3:5]}м {_[6:8]}с'
+        self.pause_time_text_label['text'] = f'Пауза установлена в: {_}'
+
+    # таймер прямого отсчета времен и паузе.
+    def __in_pause(self) -> None:
+
+        if self.PAUSE == True:
+            start_pause = \
+                        int(self.pause_time_text_label['text'][21:23])*3600 +\
+                        int(self.pause_time_text_label['text'][24:26])*60 +\
+                        int(self.pause_time_text_label['text'][27:29])
+            current_time = int(time.strftime('%H'))*3600 + int(time.strftime('%M'))*60 + int(time.strftime('%S'))
+            time_in_pause = current_time - start_pause
+            self.TIME_PAUSE = time_in_pause
+            hours = time_in_pause // 3600
+            minutes = (time_in_pause - hours * 3600) // 60
+            seconds = (time_in_pause - hours * 3600) - minutes * 60
+            self.text_time_in_pause_label['text'] = f'Время в паузе: {hours}ч:{minutes}м:{seconds}с'
+            self.TIME_IN_PAUSE = f'{hours}ч {minutes}м {seconds}с'
+            self.text_time_in_pause_label.after(1000, self.__in_pause)
+
+        else:
+            self.ALL_TIME_PAUSE.append(self.TIME_PAUSE)
+
+    '''
+    Функционал завершения сессии.
+    '''
+
+    # заверешние сессии.
+    def __on_press_end_session(self) -> None:
+
+        if self.SESSION == True or self.PAUSE == True:
+            if messagebox.askokcancel('Внмиание', 'Вы действительно хотите завершить сессию?'):
+                self.__save_info_in_db()
+        else:
+            messagebox.showerror('Внимание', 'Нельзя остановить то, что еще не началось :)')
+
+    # сохранение информации о сессии при ее завершении.
+    def __save_info_in_db(self) -> None:
+            
+        _ = time.strftime('%H:%M:%S')
+        connect = sqlite3.connect('db.sqlite3')
+        cursor = connect.cursor()
+        cursor.execute('''INSERT INTO sessions(
+                        name_session, start_session, end_session, 
+                        time_in_work, pause, start_pause, end_pause, 
+                        time_in_pause)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?);''',
+                        (self.SESSION_NAME, self.SESSION_START,
+                         f'{_[0:2]}ч {_[3:5]}м {_[6:8]}с', self.TIME_IN_WORK,
+                         self.HAVE_PAUSE, self.START_PAUSE, 
+                         self.END_PAUSE, self.TIME_IN_PAUSE))
+        connect.commit()
+        cursor.close()
+        messagebox.showinfo('Внимание', 'Информация о сессии была успешна сохранена')
+
+        self.__reset_by_zero()
+
+    # обнуление состояние приложения при завершении сессии.
+    def __reset_by_zero(self) -> None:
+    
+        self.PAUSE = False
+        self.SESSION = False
+        self.START_TIME_IN_SECONDS = 0
+        self.TIME_PAUSE = 0
+        self.ALL_TIME_PAUSE = []
+        self.SESSION_NAME = ''
+        self.SESSION_START= ''
+        self.TIME_IN_WORK = ''
+        self.HAVE_PAUSE = 'Нет'
+        self.START_PAUSE = 'Нет'
+        self.END_PAUSE = 'Нет'
+        self.TIME_IN_PAUSE = 'Нет'
+        self.CLOSE_TOPLEVEL = False
+
+        self.session_label['text'] = 'Сессия не начата'
+        self.time_session_label['text'] = 'Время в работе: 0ч:0м:0с'
+
+        self.button_pause['text'] = 'Пауза'
+        self.button_pause['command'] = self.__on_press_pause
+        self.pause_time_text_label['text'] = 'Пауза не установлена'
+        self.text_time_in_pause_label['text'] = ''
+
+    '''
+    Функционал биндов приожения.
+    '''
+
+    # функционал бинда 'WM_DELETE_WINDOW'.
+    def __on_press_close_main_window(self) -> None:
+
+        if self.SESSION or self.PAUSE:
+            if messagebox.askokcancel('Подверждение действия', 'Сессия не завершена, Вы действительно хотите выйти?'):
+                self.destroy()
+                
+        elif messagebox.askokcancel('Подверждение действия', 'Вы действительно хотите выйти?'): self.destroy()
+
+    '''
+    Функционал часов приложения.
+    '''
+
+    # часы главного окна.
+    def _clock(self) -> None:
+
+        # текущее время МСК.
+        self.current_time_label['text'] = time.strftime('%H:%M:%S')
+        self.current_time_label.after(1000, self._clock)
+
+        # текущая дата МСК.
+        self.current_data_label['text'] = time.strftime('%d:%m:%Y')
+        self.current_data_label.after(86400000, self._clock)

@@ -70,12 +70,12 @@ class SessionName(Toplevel):
             self.destroy()
             return
             
-        self.master.start_session_with_session_name(info)
+        self.master._start_session_with_session_name(info)
         self.destroy()
 
     # метод генерации рандомного имени.
     def __random_name_session(self) -> str: 
 
         info: str = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(10))
-        self.master.start_session_with_session_name(info)
+        self.master._start_session_with_session_name(info)
         self.destroy()

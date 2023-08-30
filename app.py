@@ -1,5 +1,3 @@
-from tkinter import Tk, messagebox
-
 from main import App
 
 
@@ -21,19 +19,7 @@ class WorkApp(App):
     END_PAUSE: str = 'Нет'
     TIME_IN_PAUSE: str = 'Нет'
 
-    def __init__(self) -> Tk:
-        super().__init__()
-
-        '''
-        Бинды главного окна.
-        '''
-        
-        def __on_press_close_main_window():
-
-            if messagebox.askokcancel('Подверждение действия', 'Вы действительно хотите выйти?'): self.destroy()
-
-        self.protocol('WM_DELETE_WINDOW', __on_press_close_main_window)
-
 if __name__ == '__main__':
     app = WorkApp()
+    app._clock()
     app.mainloop()
