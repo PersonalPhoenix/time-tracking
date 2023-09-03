@@ -10,6 +10,8 @@ from xlsxwriter.exceptions import FileCreateError
 from docx import Document
 
 
+none_export = 'Журнал пуст! Нечего экспортировать'
+
 def get_dir_name() -> str:
     '''
     Получение дирекории для экспорта файла.
@@ -26,7 +28,7 @@ def get_dir_name() -> str:
 
         return dir_name
     
-def success():
+def success() -> None:
     '''
     Уведомление об успехе.
     '''
@@ -46,7 +48,7 @@ def export_sql_to_excel() -> None:
         sql_query: list = cursor.fetchall()
 
         if sql_query == []:
-            messagebox.showerror('Ошибка', 'Журнал пуст! Нечего экспортировать')
+            messagebox.showerror('Ошибка', f'{none_export}')
             return
         
         workbook = Workbook(f'{get_dir_name()}/экспорт от {time.strftime("%d-%m-%Y")} в {time.strftime("%H %M %S")}.xlsx')
@@ -94,7 +96,7 @@ def export_sql_to_csv() -> None:
         data: list = cursor.fetchall()
 
         if data == []:
-            messagebox.showerror('Ошибка', 'Журнал пуст! Нечего импортировать')
+            messagebox.showerror('Ошибка', f'{none_export}')
             return
 
         with open(f'{get_dir_name()}/экспорт от {time.strftime("%d-%m-%Y")} в {time.strftime("%H %M %S")}.csv', 'w', newline = '') as file:
@@ -124,7 +126,7 @@ def export_sql_to_word() -> None:
         data: list = cursor.fetchall()
 
         if data == []:
-            messagebox.showerror('Ошибка', 'Журнал пуст! Нечего импортировать')
+            messagebox.showerror('Ошибка', f'{none_export}')
             return
         
         doc = Document()

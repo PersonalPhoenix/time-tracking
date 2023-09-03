@@ -2,12 +2,12 @@ import time
 from tkinter import Tk, Menu, Frame, Button, Label, messagebox
 import sqlite3
 
-from singleton import Singleton
+from .singleton import Singleton
 from functional_menu.file import change_current_path, current_path, default_path, clear_database
 from functional_menu.export import export_sql_to_excel, export_sql_to_csv, export_sql_to_word
 from functional_menu.hint import guide_message, contact_message, copyright_message
-from session_name import SessionName
-from jourlnal import create_journal
+from toplevel_window.session_name import SessionName
+from toplevel_window.jourlnal import CreateJournal
 
 
 class App(Singleton, Tk):
@@ -23,7 +23,6 @@ class App(Singleton, Tk):
         Базовые настройки главного окна.
         '''
 
-        # инициализация главного окна.
         self.title('Учет времени')
 
         # настройка Ш/В окна и положения на рабочем столе.
@@ -144,7 +143,7 @@ class App(Singleton, Tk):
         self.button_view_journal = Button(frame_bot_right, text = 'Просмотреть журнал',
                                     font = 'arial 14', width = 25,
                                     background = '#0009ff', cursor = 'hand2',
-                                    command = create_journal)
+                                    command = self.__create_journal)
         self.button_view_journal.pack(expand = True)
 
         # label текущего времени по МСК.
@@ -159,7 +158,28 @@ class App(Singleton, Tk):
         Бинды главного окна.
         '''
 
+        # бинд на закрытие окна
         self.protocol('WM_DELETE_WINDOW', self.__on_press_close_main_window)
+
+        # изменение цвета кнопки 'Начать сессию' при наведении мыши
+        self.button_start.bind('<Enter>', self.__on_enter_button_start)
+        # изменение цвета кнопки 'Начать сессию' при отведении мыши
+        self.button_start.bind('<Leave>', self.__on_leave_button_start)
+
+        # изменение цвета кнопки 'Пауза/Продолжить' при наведении мыши
+        self.button_pause.bind('<Enter>', self.__on_enter_button_pause)
+        # изменение цвета кнопки 'Пауза/Продолжить' при отведении мыши
+        self.button_pause.bind('<Leave>', self.__on_leave_button_pause)
+
+        # изменение цвета кнопки 'Завершить сессию' при наведении мыши
+        self.button_end_session.bind('<Enter>', self.__on_enter_button_end)
+        # изменение цвета кнопки 'Завершить сессию' при отведении мыши
+        self.button_end_session.bind('<Leave>', self.__on_leave_button_end)
+
+        # изменение цвета кнопки 'Просмотреть журнал' при наведении мыши
+        self.button_view_journal.bind('<Enter>', self.__on_enter_button_journal)
+        # изменение цвета кнопки 'Просмотреть журнал' при отведении мыши
+        self.button_view_journal.bind('<Leave>', self.__on_leave_button_journal)
 
     '''
     Методы класса.
@@ -249,7 +269,7 @@ class App(Singleton, Tk):
             self.button_pause['text'] = 'Продолжить'
             self.button_pause['command'] = self.__on_press_continue
 
-            self.END_PAUSE = 'Пауза не была остановлена'
+            self.END_PAUSE = 'Нет'
 
             self.__set_pause()
             self.__in_pause()
@@ -354,6 +374,13 @@ class App(Singleton, Tk):
         self.button_pause['command'] = self.__on_press_pause
         self.pause_time_text_label['text'] = 'Пауза не установлена'
         self.text_time_in_pause_label['text'] = ''
+    
+    '''
+    Функционал просмотра журнала.
+    '''
+
+    def __create_journal(self) -> None:
+        journal = CreateJournal()
 
     '''
     Функционал биндов приожения.
@@ -367,6 +394,38 @@ class App(Singleton, Tk):
                 self.destroy()
                 
         elif messagebox.askokcancel('Подверждение действия', 'Вы действительно хотите выйти?'): self.destroy()
+
+    # изменение цвета кнопки 'Начать сессию' при наведении мыши.
+    def __on_enter_button_start(self, event) -> None:
+        self.button_start.config(bg = '#166d34')
+
+    # изменение цвета кнопки 'Начать сессию' при отведении мыши.
+    def __on_leave_button_start(self, event) -> None:
+        self.button_start.config(bg = '#2bd465')
+
+    # изменение цвета кнопки 'Пауза/Продолжить' при наведении мыши.
+    def __on_enter_button_pause(self, event) -> None:
+        self.button_pause.config(bg = '#77971a')
+
+    # изменение цвета кнопки 'Пауза/Продолжить' при отведении мыши.
+    def __on_leave_button_pause(self, event) -> None:
+        self.button_pause.config(bg = '#abd926')
+
+    # изменение цвета кнопки 'Завершить сессию' при наведении мыши.
+    def __on_enter_button_end(self, event) -> None:
+        self.button_end_session.config(bg = '#800005')
+
+    # изменение цвета кнопки 'Завершить сессию' при отведении мыши.
+    def __on_leave_button_end(self, event) -> None:
+        self.button_end_session.config(bg = '#ff000a')
+
+    # изменение цвета кнопки 'Просмотреть журнал' при наведении мыши.
+    def __on_enter_button_journal(self, event) -> None:
+        self.button_view_journal.config(bg = '#000593')
+
+    # изменение цвета кнопки 'Просмотреть журнал' при отведении мыши.
+    def __on_leave_button_journal(self, event) -> None:
+        self.button_view_journal.config(bg = '#0009ff')
 
     '''
     Функционал часов приложения.

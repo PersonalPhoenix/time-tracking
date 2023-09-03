@@ -1,4 +1,4 @@
-from main import App
+from main_window.main import App
 
 
 class WorkApp(App):
