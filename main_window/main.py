@@ -16,7 +16,7 @@ class App(Singleton, Tk):
     Главное окно приложения.
     '''
 
-    def __init__(self) -> Tk:
+    def __init__(self) -> None:
         super().__init__()
 
         '''
@@ -245,7 +245,7 @@ class App(Singleton, Tk):
     
     # указание имени сессии при начале работы.
     def __session_name(self) -> None:
-        session_top_level = SessionName(self)
+        session_top_level = SessionName(700, 300, 350, 320, 'Имя сессии')
         self.wait_window(session_top_level)
 
     # получение указанного имени.
@@ -380,7 +380,7 @@ class App(Singleton, Tk):
     '''
 
     def __create_journal(self) -> None:
-        journal = CreateJournal()
+        journal = CreateJournal(1218, 500, 609, 320, 'Журнал')
 
     '''
     Функционал биндов приожения.
