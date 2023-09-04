@@ -1,26 +1,20 @@
-from tkinter import ttk, Toplevel, N, NO, VERTICAL, END, Menu, IntVar
+from tkinter import ttk, N, NO, VERTICAL, END, Menu
 import sqlite3
 
 from .crud_operations_in_journal import CreateCrudWindow
+from .toplevel_mixin import ToplevelMixin
 
 
-class CreateJournal(Toplevel):
+class CreateJournal(ToplevelMixin):
 
-    def __init__(self) -> None:
-        super().__init__()
-
-        '''
-        Базовые настройки Toplevel окна.
-        '''
-
-        self.title('Журнал сессий')
-
-        screen_width = self.winfo_screenwidth()
-        screen_hight = self.winfo_screenheight()
-        self.geometry(f'1218x500+{screen_width//2-609}+{screen_hight//2-320}')
+    def __init__(self, width, height, width_alignment, 
+                 height_alignment, title_window) -> None:
+        super().__init__(width, height, width_alignment, 
+                         height_alignment, title_window)
 
         self.rowconfigure(index = 0, weight = 1)
         self.columnconfigure(index = 0, weight = 1)
+        self.resizable(True, True)
 
         '''
         Выборка данных для заполнения журнала.
@@ -111,7 +105,8 @@ class CreateJournal(Toplevel):
            values = self.tree.item(item, "values")
            if values[7] == ':)':
              return
-           note = CreateCrudWindow(values)
+           note = CreateCrudWindow(values, 700, 500, 350, 320, 
+                                   f'Подробная информациия о записи № {values[0]}, {values[1]}')
            self.wait_window(note)
            self.__refresh_journal()
            
@@ -119,4 +114,5 @@ class CreateJournal(Toplevel):
 
     def __refresh_journal(self) -> None:
        self.destroy()
-       self.__init__()
+       self.__init__(self.width, self.height, self.width_alignment, 
+                     self.height_alignment, self.title_window)

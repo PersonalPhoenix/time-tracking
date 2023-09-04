@@ -1,23 +1,16 @@
-from tkinter import Toplevel, Entry, Frame, Label, Button
+from tkinter import Entry, Frame, Label, Button
 import random
 import string
 
+from .toplevel_mixin import ToplevelMixin
 
-class SessionName(Toplevel):
 
-    def __init__(self, app) -> None:
-        super().__init__(app)
-        
-        '''
-        Базовые настройки Toplevel окна.
-        '''
-        
-        self.title('Имя сессии')
+class SessionName(ToplevelMixin):
 
-        self.geometry(f'700x300+{self.winfo_screenwidth()//2-350}+{self.winfo_screenheight()//2-320}')
-        self.resizable(False, False)
-
-        self.config(background = '#1e293b')
+    def __init__(self, width, height, 
+                 width_alignment, height_alignment, title_window) -> None:
+        super().__init__(width, height, width_alignment, 
+                         height_alignment, title_window)
 
         '''
         Разметка Toplevel окна.
@@ -35,7 +28,8 @@ class SessionName(Toplevel):
         '''
 
         # подсказка над полем ввода.
-        self.hint_label = Label(frame_top, text = '*Укажите имя сессии', background = '#1e293b', foreground = '#d6e7ed', font = 'arial 25')
+        self.hint_label = Label(frame_top, text = '*Укажите имя сессии', background = '#1e293b', 
+                                foreground = '#d6e7ed', font = 'arial 25')
         self.hint_label.pack(expand = True)
 
         # поле ввода имени сессии.
@@ -45,12 +39,14 @@ class SessionName(Toplevel):
 
         # кнопка 'Okay'.
         self.button_okay = Button(frame_bottom, text = 'Окей', background = '#2bd465', 
-                             font = 'arial 14', width = 20, command = self.__on_press_okey)
+                                  font = 'arial 14', width = 20, cursor = 'hand2',
+                                  command = self.__on_press_okey)
         self.button_okay.place(x = 110, y = 60)
 
         # кнопка 'Случайное имя'.
         self.button_random_name = Button(frame_bottom, text = 'Случайное имя', background = '#abd926', 
-                               font = 'arial 14', width = 20, command = self.__random_name_session)
+                                         font = 'arial 14', width = 20, cursor = 'hand2',
+                                         command = self.__random_name_session)
         self.button_random_name.place(x = 360, y = 60)  
 
         '''
