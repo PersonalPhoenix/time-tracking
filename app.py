@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from main_window.main import App
 
 
