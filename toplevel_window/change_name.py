@@ -1,10 +1,14 @@
-from tkinter import Toplevel, Frame, Label, Entry
+from tkinter import Frame, Label, Entry
 
 from .toplevel_mixin import ToplevelMixin
 
 
 class ChangeName(ToplevelMixin):
-    
+    '''
+    Класс для Toplevel окна.
+    Окно смены имени сессии у выбранной записи.
+    '''
+
     def __init__(self, width, height, width_alignment, 
                  height_alignment, title_window) -> None:
         super().__init__(width, height, width_alignment, 
@@ -29,3 +33,4 @@ class ChangeName(ToplevelMixin):
 
         change_name_session_entry = Entry(self,)
         change_name_session_entry.pack(expand = True)
+        

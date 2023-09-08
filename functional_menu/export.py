@@ -1,16 +1,18 @@
-import json
-import sqlite3
-import os
+from json import load
+from sqlite3 import connect
+from os import getcwd
 from tkinter import messagebox
-import time
-import csv
+from time import strftime
+from csv import writer as csv_writer
 
 from xlsxwriter import Workbook
 from xlsxwriter.exceptions import FileCreateError
 from docx import Document
 
 
+# сообщение об отсутствии данных.
 none_export = 'Журнал пуст! Нечего экспортировать'
+
 
 def get_dir_name() -> str:
     '''
@@ -19,15 +21,16 @@ def get_dir_name() -> str:
 
     try:
         with open('settings.json', 'r', encoding = 'utf-8') as file:
-            dir_name: str = json.load(file)['dir_name']
+            dir_name: str = load(file)['dir_name']
 
             return dir_name
     except:
         messagebox.showerror('Внимание', 'Что-то случилось с settings.json\nФайл был сохранен в текущую директорию')
-        dir_name: str = os.getcwd()
+        dir_name: str = getcwd()
 
         return dir_name
     
+
 def success() -> None:
     '''
     Уведомление об успехе.
@@ -35,13 +38,14 @@ def success() -> None:
 
     messagebox.showinfo('Успех', f'Файл был экспортирован в {get_dir_name()}')
     
+
 def export_sql_to_excel() -> None:
     '''
     'Экспорт' -> 'Excel'.
     '''
 
     try:
-        conn = sqlite3.connect('db.sqlite3')
+        conn = connect('db.sqlite3')
         cursor = conn.cursor()
 
         cursor.execute('''select * from sessions;''')
@@ -51,7 +55,7 @@ def export_sql_to_excel() -> None:
             messagebox.showerror('Ошибка', f'{none_export}')
             return
         
-        workbook = Workbook(f'{get_dir_name()}/экспорт от {time.strftime("%d-%m-%Y")} в {time.strftime("%H %M %S")}.xlsx')
+        workbook = Workbook(f'{get_dir_name()}/экспорт от {strftime("%d-%m-%Y")} в {strftime("%H %M %S")}.xlsx')
         worksheet = workbook.add_worksheet()
 
         bold = workbook.add_format({'bold': True})
@@ -83,13 +87,14 @@ def export_sql_to_excel() -> None:
         messagebox.showerror('ОШибка создания файла', 
                              f'Возника ошибка при создании файла.\nПроверьте корректность пути экспорта')
 
+
 def export_sql_to_csv() -> None:
     '''
     'Экспорт' -> 'CSV'.
     '''
 
     try:
-        conn = sqlite3.connect('db.sqlite3')
+        conn = connect('db.sqlite3')
         cursor = conn.cursor()
 
         cursor.execute('''select * from sessions;''')
@@ -99,8 +104,8 @@ def export_sql_to_csv() -> None:
             messagebox.showerror('Ошибка', f'{none_export}')
             return
 
-        with open(f'{get_dir_name()}/экспорт от {time.strftime("%d-%m-%Y")} в {time.strftime("%H %M %S")}.csv', 'w', newline = '') as file:
-            writer = csv.writer(file)
+        with open(f'{get_dir_name()}/экспорт от {strftime("%d-%m-%Y")} в {strftime("%H %M %S")}.csv', 'w', newline = '') as file:
+            writer = csv_writer(file)
             writer.writerow([i[0] for i in cursor.description])
             writer.writerows(data)
 
@@ -113,13 +118,14 @@ def export_sql_to_csv() -> None:
         messagebox.showerror('ОШибка создания файла', 
                              f'Возника ошибка при создании файла.\nПроверьте корректность пути экспорта')
 
+
 def export_sql_to_word() -> None:
     '''
     'Экспорт' -> 'Word'.
     '''
     
     try:
-        conn = sqlite3.connect('db.sqlite3')
+        conn = connect('db.sqlite3')
         cursor = conn.cursor()
 
         cursor.execute('''select * from sessions;''')
@@ -144,7 +150,7 @@ def export_sql_to_word() -> None:
             for i, column_value in enumerate(row):
                 cells[i].text = str(column_value)
 
-        doc.save(f'{get_dir_name()}/экспорт от {time.strftime("%d-%m-%Y")} в {time.strftime("%H %M %S")}.docx')
+        doc.save(f'{get_dir_name()}/экспорт от {strftime("%d-%m-%Y")} в {strftime("%H %M %S")}.docx')
 
         cursor.close()
         conn.close()
@@ -154,3 +160,4 @@ def export_sql_to_word() -> None:
     except:
         messagebox.showerror('ОШибка создания файла', 
                              f'Возника ошибка при создании файла\nПроверьте корректность пути экспорта')
+        

@@ -6,6 +6,9 @@ from .toplevel_mixin import ToplevelMixin
 
 
 class CreateJournal(ToplevelMixin):
+    '''
+    Класс Toplevel окна для создания журнала.
+    '''
 
     def __init__(self, width, height, width_alignment, 
                  height_alignment, title_window) -> None:
@@ -112,7 +115,10 @@ class CreateJournal(ToplevelMixin):
            
         except IndexError: pass
 
+
+    # обновление журнала.
     def __refresh_journal(self) -> None:
        self.destroy()
        self.__init__(self.width, self.height, self.width_alignment, 
                      self.height_alignment, self.title_window)
+       

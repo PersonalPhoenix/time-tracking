@@ -6,13 +6,18 @@ from .toplevel_mixin import ToplevelMixin
 
 
 class CreateCrudWindow(ToplevelMixin):
-    
+    '''
+    Класс для Toplevel окна, отображения детальной информации
+    записи по двойному клику пользователя, с функционалом
+    изменения имени сессии и удаления записи.
+    '''
+
     def __init__(self, values, width,
                  height, width_alignment, height_alignment, title_window) -> None:
         super().__init__(width, height,
                          width_alignment, height_alignment, title_window)
 
-        # кортеж данных про конкретную запись
+        # кортеж данных выбранной записи.
         self.values = values
         
         '''
@@ -120,6 +125,7 @@ class CreateCrudWindow(ToplevelMixin):
     def __change_name_note(self) -> None:
         change_name = ChangeName(700, 500, 350, 320, 'Смена имени сессии')
     
+    
     # удаление отдельной записи в журнале.
     def __delete_note(self) -> None:
 
@@ -142,16 +148,22 @@ class CreateCrudWindow(ToplevelMixin):
 
         return
     
+    
     # изменение цвета кнопки 'Изменить имя сессии' при наведении мыши.
     def __on_enter_change_name_session_button(self, event) -> None:
         self.change_name_session_button.config(bg = '#77971a')
+
+
     # изменение цвета кнопки 'Изменить имя сессии' при отведении мыши.
     def __on_leave_change_name_session_button(self, event) -> None:
         self.change_name_session_button.config(bg = '#abd926')
 
+
     # изменение цвета кнопки 'Удалить запись' при наведении мыши.
     def __on_enter_delete_note_button(self, event) -> None:
         self.delete_note_button.config(bg = '#800005')
+
+
     # изменение цвета кнопки 'Удалить запись' при отведении мыши.
     def __on_leave_delete_note_button(self, event) -> None:
         self.delete_note_button.config(bg = '#ff000a')

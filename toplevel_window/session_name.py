@@ -6,20 +6,23 @@ from .toplevel_mixin import ToplevelMixin
 
 
 class SessionName(ToplevelMixin):
+    '''
+    Класс для Toplevel окна ввода имени сессии.
+    '''
 
     def __init__(self, width, height, 
                  width_alignment, height_alignment, title_window) -> None:
         super().__init__(width, height, width_alignment, 
                          height_alignment, title_window)
-
+        
         '''
         Разметка Toplevel окна.
         '''
 
-        # frame для label.
+        # frame для лейблов.
         frame_top = Frame(self, background = '#1e293b')
         frame_top.place(relx = 0, rely = 0, relheight = 0.5, relwidth = 1)
-
+        # frame для кнопок.
         frame_bottom = Frame(self, background = '#1e293b')
         frame_bottom.place(relx = 0, rely = 0.5, relheight = 0.5, relwidth = 1)
 
@@ -74,13 +77,15 @@ class SessionName(ToplevelMixin):
     def __on_press_okey(self) -> None:
         self.__pass_info()
 
+
     # передача имени сесси по нажатию 'Enter'.
     def __on_press_return(self, event) -> None:
         self.__pass_info()
 
+
     # метод получения введенного имени.
     def __pass_info(self) -> None:
-
+        # введенное пользователем имя.
         info: str = self.entry_session_name.get()
 
         if info.replace(' ', '') == '':
@@ -90,25 +95,30 @@ class SessionName(ToplevelMixin):
         self.master._start_session_with_session_name(info)
         self.destroy()
 
+
     # метод генерации рандомного имени.
     def __random_name_session(self) -> None: 
-
         info: str = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(10))
         self.master._start_session_with_session_name(info)
         self.destroy()
+
 
     # изменение цвета кнопки 'Okay' при наведении мыши.
     def __on_enter_button_okay(self, event) -> None:
         self.button_okay.config(bg = '#166d34')
 
+
     # изменение цвета кнопки 'Okay' при отведении мыши.
     def __on_leave_button_okay(self, event) -> None:
         self.button_okay.config(bg = '#2bd465')
+
 
     # изменение цвета кнопки 'Случайное имя' при наведении мыши.
     def __on_enter_button_random_name(self, event) -> None:
         self.button_random_name.config(bg = '#77971a')
 
+
     # изменение цвета кнопки 'Случайное имя' при отведении мыши.
     def __on_leave_button_random_name(self, event) -> None:
         self.button_random_name.config(bg = '#abd926')
+        
