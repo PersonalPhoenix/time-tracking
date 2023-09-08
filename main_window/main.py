@@ -1,8 +1,8 @@
-import time
+from time import strftime
 from tkinter import Tk, Menu, Frame, Button, Label, messagebox
-import sqlite3
+from sqlite3 import connect
 
-from .singleton import Singleton
+from main_window.singleton import Singleton
 from functional_menu.file import change_current_path, current_path, default_path, clear_database
 from functional_menu.export import export_sql_to_excel, export_sql_to_csv, export_sql_to_word
 from functional_menu.hint import guide_message, contact_message, copyright_message
@@ -158,27 +158,27 @@ class App(Singleton, Tk):
         Бинды главного окна.
         '''
 
-        # бинд на закрытие окна
+        # бинд на закрытие окна.
         self.protocol('WM_DELETE_WINDOW', self.__on_press_close_main_window)
 
-        # изменение цвета кнопки 'Начать сессию' при наведении мыши
+        # изменение цвета кнопки 'Начать сессию' при наведении мыши.
         self.button_start.bind('<Enter>', self.__on_enter_button_start)
-        # изменение цвета кнопки 'Начать сессию' при отведении мыши
+        # изменение цвета кнопки 'Начать сессию' при отведении мыши.
         self.button_start.bind('<Leave>', self.__on_leave_button_start)
 
-        # изменение цвета кнопки 'Пауза/Продолжить' при наведении мыши
+        # изменение цвета кнопки 'Пауза/Продолжить' при наведении мыши.
         self.button_pause.bind('<Enter>', self.__on_enter_button_pause)
-        # изменение цвета кнопки 'Пауза/Продолжить' при отведении мыши
+        # изменение цвета кнопки 'Пауза/Продолжить' при отведении мыши.
         self.button_pause.bind('<Leave>', self.__on_leave_button_pause)
 
-        # изменение цвета кнопки 'Завершить сессию' при наведении мыши
+        # изменение цвета кнопки 'Завершить сессию' при наведении мыши.
         self.button_end_session.bind('<Enter>', self.__on_enter_button_end)
-        # изменение цвета кнопки 'Завершить сессию' при отведении мыши
+        # изменение цвета кнопки 'Завершить сессию' при отведении мыши.
         self.button_end_session.bind('<Leave>', self.__on_leave_button_end)
 
-        # изменение цвета кнопки 'Просмотреть журнал' при наведении мыши
+        # изменение цвета кнопки 'Просмотреть журнал' при наведении мыши.
         self.button_view_journal.bind('<Enter>', self.__on_enter_button_journal)
-        # изменение цвета кнопки 'Просмотреть журнал' при отведении мыши
+        # изменение цвета кнопки 'Просмотреть журнал' при отведении мыши.
         self.button_view_journal.bind('<Leave>', self.__on_leave_button_journal)
 
     '''
@@ -204,11 +204,12 @@ class App(Singleton, Tk):
         
         else:
             self.SESSION = True
-            _ = time.strftime(f'%H:%M:%S')
+            _ = strftime(f'%H:%M:%S')
             self.SESSION_START = f'{_[0:2]}ч {_[3:5]}м {_[6:8]}c'
             self.session_label['text'] = f'Сессия начата в: {_}'
             self.__session_start_time_in_seconds()
             self.__working_hours()
+
 
     # вычислиение времени начало сессии в секундах.
     def __session_start_time_in_seconds(self) -> int:
@@ -218,15 +219,16 @@ class App(Singleton, Tk):
                     int(self.session_label['text'][20:22])*60 + \
                     int(self.session_label['text'][23:25])
 
+
     # таймер прямого отсчета времени в работе.
     def __working_hours(self) -> None:
             
         if self.SESSION == True:
             if self.PAUSE == False:
                 current_time = \
-                        int((time.strftime('%H')[0:2]))*3600 + \
-                        int((time.strftime('%M')[0:2]))*60 + \
-                        int((time.strftime('%S')[0:2]))
+                        int((strftime('%H')[0:2]))*3600 + \
+                        int((strftime('%M')[0:2]))*60 + \
+                        int((strftime('%S')[0:2]))
                 in_work = current_time - (self.START_TIME_IN_SECONDS + sum(self.ALL_TIME_PAUSE))
                 hours =  in_work // 3600
                 minutes = (in_work - hours * 3600) // 60
@@ -247,6 +249,7 @@ class App(Singleton, Tk):
     def __session_name(self) -> None:
         session_top_level = SessionName(700, 300, 350, 320, 'Имя сессии')
         self.wait_window(session_top_level)
+
 
     # получение указанного имени.
     def _start_session_with_session_name(self, info) -> messagebox:
@@ -274,11 +277,12 @@ class App(Singleton, Tk):
             self.__set_pause()
             self.__in_pause()
 
+
     # функционал нажатия 'Продолжить'.
     def __on_press_continue(self) -> None:
 
         self.PAUSE = False
-        _ = time.strftime('%H:%M:%S')
+        _ = strftime('%H:%M:%S')
         self.END_PAUSE = f'{_[0:2]}ч {_[3:5]}м {_[6:8]}с '
 
         self.button_pause['text'] = 'Пауза'
@@ -288,12 +292,14 @@ class App(Singleton, Tk):
             
         self.__working_hours()
 
+
     # отображение времени начала паузы.
     def __set_pause(self) -> None:
         self.HAVE_PAUSE = 'Да'
-        _ = time.strftime('%H:%M:%S')
+        _ = strftime('%H:%M:%S')
         self.START_PAUSE = f'{_[0:2]}ч {_[3:5]}м {_[6:8]}с'
         self.pause_time_text_label['text'] = f'Пауза установлена в: {_}'
+
 
     # таймер прямого отсчета времен и паузе.
     def __in_pause(self) -> None:
@@ -303,7 +309,7 @@ class App(Singleton, Tk):
                         int(self.pause_time_text_label['text'][21:23])*3600 +\
                         int(self.pause_time_text_label['text'][24:26])*60 +\
                         int(self.pause_time_text_label['text'][27:29])
-            current_time = int(time.strftime('%H'))*3600 + int(time.strftime('%M'))*60 + int(time.strftime('%S'))
+            current_time = int(strftime('%H'))*3600 + int(strftime('%M'))*60 + int(strftime('%S'))
             time_in_pause = current_time - start_pause
             self.TIME_PAUSE = time_in_pause
             hours = time_in_pause // 3600
@@ -329,11 +335,12 @@ class App(Singleton, Tk):
         else:
             messagebox.showerror('Внимание', 'Нельзя остановить то, что еще не началось :)')
 
+
     # сохранение информации о сессии при ее завершении.
     def __save_info_in_db(self) -> None:
             
-        _ = time.strftime('%H:%M:%S')
-        connect = sqlite3.connect('db.sqlite3')
+        _ = strftime('%H:%M:%S')
+        connect = connect('db.sqlite3')
         cursor = connect.cursor()
         cursor.execute('''INSERT INTO sessions(
                         name_session, start_session, end_session, 
@@ -349,6 +356,7 @@ class App(Singleton, Tk):
         messagebox.showinfo('Внимание', 'Информация о сессии была успешна сохранена')
 
         self.__reset_by_zero()
+
 
     # обнуление состояние приложения при завершении сессии.
     def __reset_by_zero(self) -> None:
@@ -395,33 +403,41 @@ class App(Singleton, Tk):
                 
         elif messagebox.askokcancel('Подверждение действия', 'Вы действительно хотите выйти?'): self.destroy()
 
+
     # изменение цвета кнопки 'Начать сессию' при наведении мыши.
     def __on_enter_button_start(self, event) -> None:
         self.button_start.config(bg = '#166d34')
+
 
     # изменение цвета кнопки 'Начать сессию' при отведении мыши.
     def __on_leave_button_start(self, event) -> None:
         self.button_start.config(bg = '#2bd465')
 
+
     # изменение цвета кнопки 'Пауза/Продолжить' при наведении мыши.
     def __on_enter_button_pause(self, event) -> None:
         self.button_pause.config(bg = '#77971a')
+
 
     # изменение цвета кнопки 'Пауза/Продолжить' при отведении мыши.
     def __on_leave_button_pause(self, event) -> None:
         self.button_pause.config(bg = '#abd926')
 
+
     # изменение цвета кнопки 'Завершить сессию' при наведении мыши.
     def __on_enter_button_end(self, event) -> None:
         self.button_end_session.config(bg = '#800005')
+
 
     # изменение цвета кнопки 'Завершить сессию' при отведении мыши.
     def __on_leave_button_end(self, event) -> None:
         self.button_end_session.config(bg = '#ff000a')
 
+
     # изменение цвета кнопки 'Просмотреть журнал' при наведении мыши.
     def __on_enter_button_journal(self, event) -> None:
         self.button_view_journal.config(bg = '#000593')
+
 
     # изменение цвета кнопки 'Просмотреть журнал' при отведении мыши.
     def __on_leave_button_journal(self, event) -> None:
@@ -435,9 +451,9 @@ class App(Singleton, Tk):
     def _clock(self) -> None:
 
         # текущее время МСК.
-        self.current_time_label['text'] = time.strftime('%H:%M:%S')
+        self.current_time_label['text'] = strftime('%H:%M:%S')
         self.current_time_label.after(1000, self._clock)
 
         # текущая дата МСК.
-        self.current_data_label['text'] = time.strftime('%d:%m:%Y')
+        self.current_data_label['text'] = strftime('%d:%m:%Y')
         self.current_data_label.after(86400000, self._clock)
